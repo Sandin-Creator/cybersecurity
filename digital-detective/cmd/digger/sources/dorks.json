@@ -1,0 +1,82 @@
+{
+    "general": [
+        {
+            "name": "Exact Match",
+            "dork": "site:facebook.com OR site:instagram.com OR site:twitter.com OR site:linkedin.com {{.Name}}",
+            "description": "Checks major social platforms for exact name matches."
+        }
+    ],
+    "files": [
+        {
+            "name": "PDF Fragments",
+            "dork": "filetype:pdf {{.Name}}",
+            "description": "Finds resumes, lists, and documents containing the name."
+        },
+        {
+            "name": "Excel Leaks",
+            "dork": "filetype:xls OR filetype:xlsx OR filetype:csv {{.Name}}",
+            "description": "Finds spreadsheets (often leaked user lists) with the name."
+        },
+        {
+            "name": "Word Documents",
+            "dork": "filetype:doc OR filetype:docx {{.Name}}",
+            "description": "Finds Word documents mentioning the name."
+        },
+        {
+            "name": "Text/Logs",
+            "dork": "filetype:txt OR filetype:log {{.Name}}",
+            "description": "Finds plain text files and server logs."
+        }
+    ],
+    "social": [
+        {
+            "name": "Instagram Bio",
+            "dork": "site:instagram.com {{.Name}}",
+            "description": "Searches Instagram profiles explicitly."
+        },
+        {
+            "name": "Facebook Profile",
+            "dork": "site:facebook.com {{.Name}}",
+            "description": "Searches Facebook public profiles."
+        },
+        {
+            "name": "LinkedIn",
+            "dork": "site:linkedin.com/in/ {{.Name}}",
+            "description": "Searches LinkedIn professional profiles."
+        },
+        {
+            "name": "Twitter/X",
+            "dork": "site:twitter.com {{.Name}}",
+            "description": "Searches Twitter feeds."
+        },
+        {
+            "name": "TikTok",
+            "dork": "site:tiktok.com {{.Name}}",
+            "description": "Searches TikTok users."
+        }
+    ],
+    "government": [
+        {
+            "name": "Finnish Business (YTJ)",
+            "dork": "site:ytj.fi OR site:kauppalehti.fi OR site:asiakastieto.fi {{.Name}}",
+            "description": "Checks Finnish business and trade registers for company connections."
+        },
+        {
+            "name": "Finnish Public Records",
+            "dork": "site:fi filetype:pdf OR filetype:doc \"pöytäkirja\" AND {{.Name}}",
+            "description": "Searches official meeting minutes and documents from Finnish institutions."
+        },
+        {
+            "name": "Finnish News Media",
+            "dork": "site:yle.fi OR site:hs.fi OR site:iltalehti.fi OR site:is.fi {{.Name}}",
+            "description": "Checks major Finnish news outlets for mentions."
+        }
+    ],
+    "leaks": [
+        {
+            "name": "Data Leaks (Pastebin)",
+            "dork": "site:pastebin.com OR site:throwbin.io OR site:justpaste.it {{.Name}}",
+            "description": "Searches text storage sites for leaked credentials or data dumps."
+        }
+    ]
+}

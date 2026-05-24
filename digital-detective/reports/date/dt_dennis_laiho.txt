@@ -1,0 +1,40 @@
+
+    ____  _       _ _        _    ____       _        _   _           
+   |  _ \(_) __ _(_) |_ __ _| |  |  _ \  ___| |_ ___| |_(_)_   _____ 
+   | | | | |/ _` | | __/ _` | |  | | | |/ _ \ __/ _ \ __| | \ \ / / _ \
+   | |_| | | (_| | | || (_| | |  | |_| |  __/ ||  __/ |_| | |\ V /  __/
+   |____/|_|\__, |_|\__\__,_|_|  |____/ \___|\__\___|\__|_|_| \_/ \___|
+            |___/                                                      
+
+============================================================
+| DATING INVESTIGATION                                     |
+============================================================
+Username Scan for: 'dennislaiho'
+--------------------------------------------------
+[+] FOUND:     Facebook     https://www.facebook.com/dennislaiho
+[+] FOUND:     Pinterest    https://www.pinterest.com/dennislaiho/
+--------------------------------------------------
+[-] NOT FOUND: GitHub       https://github.com/dennislaiho
+[-] NOT FOUND: OkCupid      https://www.okcupid.com/profile/dennislaiho
+[-] NOT FOUND: Twitter/X    https://twitter.com/dennislaiho
+[-] NOT FOUND: Reddit       https://www.reddit.com/user/dennislaiho
+[-] NOT FOUND: Instagram    https://www.instagram.com/dennislaiho/
+[-] NOT FOUND: Spotify      https://open.spotify.com/user/dennislaiho
+[-] NOT FOUND: Pastebin     https://pastebin.com/u/dennislaiho
+[-] NOT FOUND: Snapchat     https://www.snapchat.com/add/dennislaiho
+[-] NOT FOUND: Tinder       https://tinder.com/@dennislaiho
+[-] NOT FOUND: Badoo        https://badoo.com/profile/dennislaiho
+--------------------------------------------------
+CONFIDENCE: 2 detections
+
+============================================================
+| DATING APP INVESTIGATOR (OSINT Inference)                |
+============================================================
+Note: This tool checks for *public* signals (bios, links) 
+that suggest dating app usage. It does NOT query dating sites API.
+
+Composite Score: 4/10 [████░░░░░░]
+Inference:       POSSIBLE
+--------------------------------------------------
+[!] Likely (+4): Found keyword 'single' on Facebook
+============================================================

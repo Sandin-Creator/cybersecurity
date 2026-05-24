@@ -1,0 +1,29 @@
+
+    ____  _       _ _        _    ____       _        _   _           
+   |  _ \(_) __ _(_) |_ __ _| |  |  _ \  ___| |_ ___| |_(_)_   _____ 
+   | | | | |/ _` | | __/ _` | |  | | | |/ _ \ __/ _ \ __| | \ \ / / _ \
+   | |_| | | (_| | | || (_| | |  | |_| |  __/ ||  __/ |_| | |\ V /  __/
+   |____/|_|\__, |_|\__\__,_|_|  |____/ \___|\__\___|\__|_|_| \_/ \___|
+            |___/                                                      
+
+============================================================
+| USERNAME SEARCH                                          |
+============================================================
+Username Scan for: 'dennis'
+--------------------------------------------------
+[+] FOUND:     Spotify      https://open.spotify.com/user/dennis
+[+] FOUND:     Pinterest    https://www.pinterest.com/dennis/
+[+] FOUND:     Snapchat     https://www.snapchat.com/add/dennis
+[+] FOUND:     Twitter/X    https://twitter.com/dennis
+[+] FOUND:     GitHub       https://github.com/dennis
+[+] FOUND:     Pastebin     https://pastebin.com/u/dennis
+--------------------------------------------------
+[-] NOT FOUND: OkCupid      https://www.okcupid.com/profile/dennis
+[-] NOT FOUND: Badoo        https://badoo.com/profile/dennis
+[-] NOT FOUND: Tinder       https://tinder.com/@dennis
+[-] NOT FOUND: Reddit       https://www.reddit.com/user/dennis
+[-] NOT FOUND: Instagram    https://www.instagram.com/dennis/
+[-] NOT FOUND: Facebook     https://www.facebook.com/dennis
+--------------------------------------------------
+CONFIDENCE: 6 detections
+============================================================

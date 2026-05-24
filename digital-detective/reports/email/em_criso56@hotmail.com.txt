@@ -1,0 +1,52 @@
+
+    ____  _       _ _        _    ____       _        _   _           
+   |  _ \(_) __ _(_) |_ __ _| |  |  _ \  ___| |_ ___| |_(_)_   _____ 
+   | | | | |/ _` | | __/ _` | |  | | | |/ _ \ __/ _ \ __| | \ \ / / _ \
+   | |_| | | (_| | | || (_| | |  | |_| |  __/ ||  __/ |_| | |\ V /  __/
+   |____/|_|\__, |_|\__\__,_|_|  |____/ \___|\__\___|\__|_|_| \_/ \___|
+            |___/                                                      
+
+============================================================
+| EMAIL SEARCH                                             |
+============================================================
+Detected Email: criso56@hotmail.com
+Extracted Username/Handle: criso56
+--------------------------------------------------
+Username Scan for: 'criso56'
+--------------------------------------------------
+[+] FOUND:     Snapchat     https://www.snapchat.com/add/criso56
+[+] FOUND:     Pinterest    https://www.pinterest.com/criso56/
+[+] FOUND:     Facebook     https://www.facebook.com/criso56
+--------------------------------------------------
+[-] NOT FOUND: Spotify      https://open.spotify.com/user/criso56
+[-] NOT FOUND: OkCupid      https://www.okcupid.com/profile/criso56
+[-] NOT FOUND: Pastebin     https://pastebin.com/u/criso56
+[-] NOT FOUND: Badoo        https://badoo.com/profile/criso56
+[-] NOT FOUND: Twitter/X    https://twitter.com/criso56
+[-] NOT FOUND: Tinder       https://tinder.com/@criso56
+[-] NOT FOUND: GitHub       https://github.com/criso56
+[-] NOT FOUND: Reddit       https://www.reddit.com/user/criso56
+[-] NOT FOUND: Instagram    https://www.instagram.com/criso56/
+--------------------------------------------------
+CONFIDENCE: 3 detections
+
+--------------------------------------------------
+REAL DATA LOOKUP TOOLS (Email Dorks)
+Click these links to find where this email is mentioned publically:
+
+[+] General Search (Exact Match):
+    https://www.google.com/search?q=%22criso56%40hotmail.com%22
+
+[+] Social Media Mentions:
+    https://www.google.com/search?q=%22criso56%40hotmail.com%22+site:twitter.com+OR+site:facebook.com+OR+site:linkedin.com+OR+site:instagram.com
+
+[+] Leaked Databases/Pastebin:
+    https://www.google.com/search?q=%22criso56%40hotmail.com%22+site:pastebin.com+OR+site:throwbin.io+OR+site:justpaste.it
+
+[+] PDF Documents:
+    https://www.google.com/search?q=%22criso56%40hotmail.com%22+filetype:pdf
+
+[+] Text Files (Breach Dumps):
+    https://www.google.com/search?q=%22criso56%40hotmail.com%22+filetype:txt
+
+============================================================

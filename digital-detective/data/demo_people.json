@@ -1,0 +1,11 @@
+[
+  {
+    "full_name": "Dwight Schrute",
+    "address": "Schrute Farms, Rural Route 6, Honesdale, PA 18431",
+    "phone": "308-826-5962",
+    "extra": {
+      "occupation": "Assistant to the Regional Manager",
+      "company": "Dunder Mifflin"
+    }
+  }
+]

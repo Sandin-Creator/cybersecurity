@@ -1,0 +1,58 @@
+
+    ____  _       _ _        _    ____       _        _   _           
+   |  _ \(_) __ _(_) |_ __ _| |  |  _ \  ___| |_ ___| |_(_)_   _____ 
+   | | | | |/ _` | | __/ _` | |  | | | |/ _ \ __/ _ \ __| | \ \ / / _ \
+   | |_| | | (_| | | || (_| | |  | |_| |  __/ ||  __/ |_| | |\ V /  __/
+   |____/|_|\__, |_|\__\__,_|_|  |____/ \___|\__\___|\__|_|_| \_/ \___|
+            |___/                                                      
+
+============================================================
+| NAME LOOKUP                                              |
+============================================================
+OSINT Report for: dennis laiho
+--------------------------------------------------
+REAL DATA LOOKUP TOOLS (Active Verification)
+Checking links for results (this may take a moment)...
+
+>>> GENERAL SEARCH
+[?] Exact Match: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Afacebook.com+OR+site%3Ainstagram.com+OR+site%3Atwitter.com+OR+site%3Alinkedin.com+%22dennis+laiho%22
+
+>>> SOCIAL MEDIA INVESTIGATION
+[?] Instagram Bio: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Ainstagram.com+%22dennis+laiho%22
+[?] Facebook Profile: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Afacebook.com+%22dennis+laiho%22
+[?] LinkedIn: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22dennis+laiho%22
+[?] Twitter/X: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Atwitter.com+%22dennis+laiho%22
+[?] TikTok: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Atiktok.com+%22dennis+laiho%22
+
+>>> FILE FORENSICS (PDF, Excel, Docs)
+[?] PDF Fragments: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=filetype%3Apdf+%22dennis+laiho%22
+[?] Excel Leaks: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=filetype%3Axls+OR+filetype%3Axlsx+OR+filetype%3Acsv+%22dennis+laiho%22
+[?] Word Documents: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=filetype%3Adoc+OR+filetype%3Adocx+%22dennis+laiho%22
+[?] Text/Logs: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=filetype%3Atxt+OR+filetype%3Alog+%22dennis+laiho%22
+
+>>> GOVERNMENT RECORDS
+[?] Finnish Business (YTJ): Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Aytj.fi+OR+site%3Akauppalehti.fi+OR+site%3Aasiakastieto.fi+%22dennis+laiho%22
+[?] Finnish Public Records: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Afi+filetype%3Apdf+OR+filetype%3Adoc+%22p%C3%B6yt%C3%A4kirja%22+AND+%22dennis+laiho%22
+[?] Finnish News Media: Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Ayle.fi+OR+site%3Ahs.fi+OR+site%3Ailtalehti.fi+OR+site%3Ais.fi+%22dennis+laiho%22
+
+>>> LEAKS & EXPOSURES
+[?] Data Leaks (Pastebin): Verification Blocked (Cookie/CAPTCHA) - Manual Check Required
+    https://www.google.com/search?q=site%3Apastebin.com+OR+site%3Athrowbin.io+OR+site%3Ajustpaste.it+%22dennis+laiho%22
+
+--------------------------------------------------
+ PRIVACY TIP: These results are live from Google. 
+ To remove them, you must contact the hosting site.
+============================================================

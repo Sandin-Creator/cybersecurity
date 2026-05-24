@@ -1,0 +1,36 @@
+
+    ____  _       _ _        _    ____       _        _   _           
+   |  _ \(_) __ _(_) |_ __ _| |  |  _ \  ___| |_ ___| |_(_)_   _____ 
+   | | | | |/ _` | | __/ _` | |  | | | |/ _ \ __/ _ \ __| | \ \ / / _ \
+   | |_| | | (_| | | || (_| | |  | |_| |  __/ ||  __/ |_| | |\ V /  __/
+   |____/|_|\__, |_|\__\__,_|_|  |____/ \___|\__\___|\__|_|_| \_/ \___|
+            |___/                                                      
+
+============================================================
+| NAME LOOKUP                                              |
+============================================================
+OSINT Report for: dennis laiho
+--------------------------------------------------
+REAL DATA LOOKUP TOOLS (Active Verification)
+Checking links for results (this may take a moment)...
+
+>>> GENERAL SEARCH
+[?] Exact Match: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Afacebook.com+OR+site%3Ainstagram.com+OR+site%3Atwitter.com+OR+site%3Alinkedin.com+%22dennis+laiho%22
+
+>>> SOCIAL MEDIA INVESTIGATION
+[?] Instagram Bio: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Ainstagram.com+%22dennis+laiho%22
+[?] Facebook Profile: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Afacebook.com+%22dennis+laiho%22
+[?] LinkedIn: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Alinkedin.com%2Fin%2F+%22dennis+laiho%22
+[?] Twitter/X: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Atwitter.com+%22dennis+laiho%22
+[?] TikTok: Verification Blocked (Manual Check)
+    https://www.google.com/search?q=site%3Atiktok.com+%22dennis+laiho%22
+
+--------------------------------------------------
+ PRIVACY TIP: These results are live from Google. 
+ To remove them, you must contact the hosting site.
+============================================================
