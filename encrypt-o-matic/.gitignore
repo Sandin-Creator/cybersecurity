@@ -1,0 +1,12 @@
+.encryptomatic/
+*.exe
+!tests/testdata/*.exe
+*.bak
+*.enc
+demo.exe
+empty.exe
+large.exe
+testdir/
+dist/
+build/
+.tools/
