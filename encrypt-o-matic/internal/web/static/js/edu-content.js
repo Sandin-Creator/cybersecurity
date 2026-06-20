@@ -1,0 +1,346 @@
+/* Educational content for Encrypt-O-Matic reviewer-friendly UI */
+
+window.EDU = {
+  fields: {
+    targetPath: {
+      label: 'Target Path',
+      description: 'Path to the file or directory that will be encrypted.',
+      why: 'The tool only processes files explicitly selected by the user.',
+      browserNote: 'Because browsers do not expose full local file paths for security reasons, this dashboard uses a local backend path picker instead of a normal HTML upload input.',
+    },
+    targetType: {
+      label: 'Target Type',
+      description: 'Choose whether to encrypt a single file or all supported executables in a directory.',
+      why: 'Demonstrates both single-file and multi-file encryption workflows.',
+      options: {
+        file: 'Encrypt one executable.',
+        dir: 'Recursively encrypt supported executable files (.exe).',
+      },
+    },
+    algorithm: {
+      label: 'Algorithm',
+      description: 'Symmetric encryption algorithm applied to compressed file contents.',
+      why: 'Allows reviewers to compare multiple encryption approaches.',
+      options: {
+        AES: 'Industry standard encryption used in TLS, BitLocker, and VPNs.',
+        ChaCha20: 'Modern stream cipher optimized for software performance.',
+        Twofish: 'Alternative block cipher used for educational comparison.',
+      },
+    },
+    paddingMb: {
+      label: 'Padding Size (MB)',
+      description: 'Random data appended after encryption.',
+      why: 'Demonstrates file size manipulation while preserving recoverability.',
+    },
+    durationMin: {
+      label: 'Duration',
+      description: 'Number of minutes before the file becomes eligible for automatic restoration.',
+      why: 'Demonstrates timer-based locking functionality.',
+    },
+    customRange: {
+      label: 'Custom Range',
+      description: 'Range used for the SHA-256 workload operation.',
+      example: '0-100000',
+      why: 'Demonstrates configurable pre-encryption processing.',
+    },
+    masterPassword: {
+      label: 'Master Password',
+      description: 'Password used to authenticate and derive encryption keys.',
+      why: 'Protects access to encrypted content.',
+    },
+  },
+
+  pipeline: [
+    {
+      id: 'file',
+      title: 'File',
+      what: 'Reads the target executable from disk into memory.',
+      tech: 'Go os.ReadFile',
+      why: 'Only user-specified paths are processed — no automatic discovery.',
+    },
+    {
+      id: 'compression',
+      title: 'Compression',
+      what: 'Reduces repetitive data before encryption.',
+      tech: 'gzip',
+      why: 'Demonstrates a realistic pre-encryption workflow.',
+    },
+    {
+      id: 'custom',
+      title: 'SHA-256 Workload',
+      what: 'Runs configurable SHA-256 iterations on a numeric range before encryption.',
+      tech: 'SHA-256 loop (custom range)',
+      why: 'Demonstrates configurable pre-encryption processing.',
+    },
+    {
+      id: 'pbkdf2',
+      title: 'PBKDF2 + Salt',
+      what: 'Derives an encryption key from the master password.',
+      tech: 'PBKDF2-SHA256, 100,000 iterations',
+      why: 'Makes brute-force attacks more expensive.',
+    },
+    {
+      id: 'encrypt',
+      title: 'AES / ChaCha20 / Twofish',
+      what: 'Encrypts file contents with authenticated encryption.',
+      tech: 'AES-256-GCM, ChaCha20-Poly1305, or Twofish-GCM',
+      why: 'Protects confidentiality of the original file.',
+    },
+    {
+      id: 'padding',
+      title: 'Padding',
+      what: 'Appends random bytes after ciphertext.',
+      tech: 'crypto/rand',
+      why: 'Changes file size without affecting recovery.',
+    },
+    {
+      id: 'metadata',
+      title: 'Metadata Saved',
+      what: 'Stores encryption parameters, hashes, and unlock timer in JSON.',
+      tech: '.encryptomatic/metadata/*.json',
+      why: 'Enables decryption, integrity verification, and timer-based restore.',
+    },
+  ],
+
+  progressSteps: [
+    { id: 'loaded', label: 'File Loaded', explanation: 'Target file read from disk and validated.' },
+    { id: 'compression', label: 'Compression', explanation: 'Content compressed with gzip to reduce size before encryption.' },
+    { id: 'pbkdf2', label: 'PBKDF2', explanation: 'Encryption key derived from password using per-file salt.' },
+    { id: 'encryption', label: 'Encryption', explanation: 'Compressed data encrypted with the selected algorithm.' },
+    { id: 'padding', label: 'Padding', explanation: 'Random bytes appended to change on-disk file size.' },
+    { id: 'metadata', label: 'Metadata Saved', explanation: 'Recovery parameters written to JSON metadata file.' },
+  ],
+
+  dashboard: {
+    masterPassword: {
+      title: 'Master Password Status',
+      description: 'Whether a bcrypt master password hash has been configured.',
+      why: 'Authentication is required before any encryption or decryption operation.',
+    },
+    encryptedFiles: {
+      title: 'Encrypted Files',
+      description: 'Count of files currently in encrypted state on disk.',
+      why: 'Shows the scope of encryption activity performed through the tool.',
+    },
+    backups: {
+      title: 'Backups',
+      description: 'Timestamped copies created before each file modification.',
+      why: 'Demonstrates safe rollback — original content can be recovered from backup.',
+    },
+    metadata: {
+      title: 'Metadata Files',
+      description: 'JSON records storing salt, nonce, algorithm, and unlock timer per file.',
+      why: 'Metadata is required for decryption and integrity verification.',
+    },
+    algorithms: {
+      title: 'Supported Algorithms',
+      description: 'AES-256-GCM, ChaCha20-Poly1305, and Twofish-GCM.',
+      why: 'Reviewers can compare industry-standard and alternative cipher implementations.',
+    },
+    tests: {
+      title: 'Tests Passing',
+      description: 'Automated Go test suite results from the last test run.',
+      why: 'Provides evidence that cryptographic operations work correctly end-to-end.',
+    },
+  },
+
+  security: [
+    {
+      id: 'password',
+      title: 'Password',
+      purpose: 'User-provided secret for authentication and key derivation.',
+      technology: 'Interactive prompt (CLI) or form input (Web UI)',
+      benefit: 'Never stored in plaintext — only used transiently during operations.',
+    },
+    {
+      id: 'bcrypt',
+      title: 'bcrypt',
+      purpose: 'Verify the master password without storing it.',
+      technology: 'bcrypt hash in .encryptomatic/master.hash',
+      benefit: 'Slow hashing resists offline brute-force attacks on the stored hash.',
+    },
+    {
+      id: 'pbkdf2',
+      title: 'PBKDF2',
+      purpose: 'Derive a 256-bit encryption key from the master password.',
+      technology: 'PBKDF2-SHA256, 100,000 iterations',
+      benefit: 'Key stretching makes password guessing computationally expensive.',
+    },
+    {
+      id: 'salt',
+      title: 'Salt',
+      purpose: 'Ensure unique derived keys for each encrypted file.',
+      technology: '16-byte random salt per file (crypto/rand)',
+      benefit: 'Prevents rainbow-table and identical-ciphertext attacks across files.',
+    },
+    {
+      id: 'aes',
+      title: 'AES',
+      purpose: 'Industry-standard authenticated encryption of file contents.',
+      technology: 'AES-256-GCM',
+      benefit: 'Confidentiality and integrity — tampering is detected during decryption.',
+    },
+    {
+      id: 'chacha20',
+      title: 'ChaCha20',
+      purpose: 'Modern stream cipher alternative for software environments.',
+      technology: 'ChaCha20-Poly1305',
+      benefit: 'Strong security with excellent performance on CPUs without AES-NI.',
+    },
+    {
+      id: 'twofish',
+      title: 'Twofish',
+      purpose: 'Educational comparison cipher alongside AES and ChaCha20.',
+      technology: 'Twofish-GCM (golang.org/x/crypto/twofish)',
+      benefit: 'Demonstrates pluggable algorithm support in the encryption pipeline.',
+    },
+    {
+      id: 'sha256',
+      title: 'SHA-256 Verification',
+      purpose: 'Verify decrypted content matches the original file.',
+      technology: 'SHA-256 hash stored in metadata at encryption time',
+      benefit: 'Detects corruption or tampering after decryption completes.',
+    },
+    {
+      id: 'backup',
+      title: 'Backup System',
+      purpose: 'Preserve original file before any modification.',
+      technology: 'Timestamped copy in .encryptomatic/backups/',
+      benefit: 'Safe recovery path if encryption or decryption needs to be retried.',
+    },
+  ],
+
+  fileFields: {
+    algorithm: {
+      label: 'Algorithm',
+      description: 'Symmetric cipher used to encrypt this file.',
+      why: 'Determines which decryption routine and key size are applied on restore.',
+    },
+    salt: {
+      label: 'Salt',
+      description: 'Random 16-byte value unique to this encryption operation.',
+      why: 'Combined with the master password in PBKDF2 to produce a unique encryption key.',
+    },
+    nonce: {
+      label: 'Nonce',
+      description: 'Number used once — ensures identical plaintext produces different ciphertext.',
+      why: 'Required by GCM and Poly1305 modes to prevent replay and pattern analysis.',
+    },
+    padding: {
+      label: 'Padding',
+      description: 'Random bytes appended after the encrypted payload.',
+      why: 'Changes on-disk file size without affecting the recoverable original content.',
+    },
+    sha256: {
+      label: 'SHA-256 Hash',
+      description: 'Cryptographic fingerprint of the original file before encryption.',
+      why: 'Verified after decryption to confirm the restored file is bit-identical to the original.',
+    },
+    unlockTime: {
+      label: 'Unlock Time',
+      description: 'UTC timestamp when automatic restoration becomes eligible.',
+      why: 'Demonstrates timer-based locking — expired files auto-restore on next encrypt-mode run.',
+    },
+  },
+
+  reviewer: [
+    {
+      id: 'aes',
+      name: 'AES Support',
+      implemented: 'AES-256-GCM encryption and decryption in internal/crypto.',
+      code: 'internal/crypto/crypto.go',
+      test: 'encrypt-o-matic.exe demo.exe AES 0 0-1000 1',
+    },
+    {
+      id: 'chacha20',
+      name: 'ChaCha20 Support',
+      implemented: 'ChaCha20-Poly1305 authenticated encryption.',
+      code: 'internal/crypto/crypto.go',
+      test: 'encrypt-o-matic.exe demo.exe ChaCha20 0 0-1000 1',
+    },
+    {
+      id: 'twofish',
+      name: 'Twofish Support',
+      implemented: 'Twofish-GCM via golang.org/x/crypto/twofish.',
+      code: 'internal/crypto/crypto.go',
+      test: 'encrypt-o-matic.exe demo.exe Twofish 0 0-1000 1',
+    },
+    {
+      id: 'pbkdf2',
+      name: 'PBKDF2 Key Derivation',
+      implemented: '100,000-iteration PBKDF2-SHA256 with per-file salt.',
+      code: 'internal/crypto/crypto.go',
+      test: 'go test ./internal/crypto/...',
+    },
+    {
+      id: 'bcrypt',
+      name: 'bcrypt Password Hash',
+      implemented: 'Master password stored as bcrypt hash, never plaintext.',
+      code: 'internal/auth/auth.go',
+      test: 'encrypt-o-matic.exe verify-password',
+    },
+    {
+      id: 'compression',
+      name: 'gzip Compression',
+      implemented: 'Pre-encryption gzip compression of file contents.',
+      code: 'internal/fileops/fileops.go',
+      test: 'go test ./tests/integration/...',
+    },
+    {
+      id: 'padding',
+      name: 'Random Padding',
+      implemented: 'Configurable random byte padding appended after ciphertext.',
+      code: 'internal/fileops/fileops.go',
+      test: 'encrypt-o-matic.exe demo.exe AES 1 0-1000 1',
+    },
+    {
+      id: 'metadata',
+      name: 'Metadata Storage',
+      implemented: 'Per-file JSON metadata with salt, nonce, hash, unlock timer.',
+      code: 'internal/metadata/metadata.go',
+      test: 'encrypt-o-matic.exe debug-info',
+    },
+    {
+      id: 'timer',
+      name: 'Timer-Based Lock',
+      implemented: 'Unlock time stored in metadata; auto-restore when expired.',
+      code: 'internal/timer/timer.go',
+      test: 'Encrypt with duration > 0, wait or adjust metadata unlock_time',
+    },
+    {
+      id: 'backup',
+      name: 'Backup System',
+      implemented: 'Timestamped backup before every file modification.',
+      code: 'internal/fileops/fileops.go',
+      test: 'encrypt-o-matic.exe debug-info (check backups list)',
+    },
+    {
+      id: 'directory',
+      name: 'Directory Encryption',
+      implemented: 'Recursive .exe encryption in user-specified directories.',
+      code: 'internal/fileops/fileops.go',
+      test: 'encrypt-o-matic.exe C:\\path\\to\\dir AES 0 0-1000 1',
+    },
+    {
+      id: 'sha256',
+      name: 'SHA-256 Verification',
+      implemented: 'Original file hash stored and verified after decryption.',
+      code: 'internal/fileops/fileops.go',
+      test: 'go test ./tests/integration/...',
+    },
+    {
+      id: 'custom',
+      name: 'Custom SHA-256 Workload',
+      implemented: 'Configurable numeric range SHA-256 loop before encryption.',
+      code: 'internal/custom/custom.go',
+      test: 'encrypt-o-matic.exe demo.exe AES 0 0-100000 1',
+    },
+    {
+      id: 'web',
+      name: 'Web Dashboard',
+      implemented: 'Local HTTP server with educational reviewer UI.',
+      code: 'internal/web/',
+      test: 'encrypt-o-matic.exe server --port 8080',
+    },
+  ],
+};

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Encrypt-O-Matic Dashboard</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">🔐</div>
+        <div>
+          <h1>Encrypt-O-Matic</h1>
+          <p>Security Dashboard</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="/" data-route="/">Dashboard</a>
+        <a href="/encrypt" data-route="/encrypt">Encrypt</a>
+        <a href="/files" data-route="/files">Encrypted Files</a>
+        <a href="/security" data-route="/security">Security</a>
+        <a href="/reviewer" data-route="/reviewer">Reviewer Mode</a>
+        <a href="/debug" data-route="/debug">Debug</a>
+      </nav>
+      <div class="sidebar-footer">
+        <span class="badge badge-info">Educational Use Only</span>
+      </div>
+    </aside>
+    <main class="content">
+      <header class="topbar">
+        <h2 id="page-title">Dashboard</h2>
+        <div class="topbar-actions">
+          <span id="clock"></span>
+        </div>
+      </header>
+      <div id="app-root" class="page-root"></div>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/assets/js/edu-content.js"></script>
+  <script src="/assets/js/app.js"></script>
+</body>
+</html>

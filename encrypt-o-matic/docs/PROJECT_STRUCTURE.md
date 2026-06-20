@@ -53,8 +53,14 @@ encrypt-o-matic/
 │   │   └── fileops.go           # file I/O, compression, pipeline
 │   ├── metadata/
 │   │   └── metadata.go          # metadata struct and JSON persistence
-│   └── timer/
-│       └── timer.go             # unlock timer logic
+│   ├── timer/
+│   │   └── timer.go             # unlock timer logic
+│   └── web/
+│       ├── server.go            # HTTP server and routing
+│       ├── handlers.go          # REST API handlers
+│       ├── service.go           # Dashboard data assembly
+│       ├── jobs.go              # Encrypt progress jobs
+│       └── static/              # Embedded HTML/CSS/JS dashboard
 ├── tests/
 │   ├── integration/
 │   │   └── workflow_test.go     # end-to-end file encrypt/decrypt tests

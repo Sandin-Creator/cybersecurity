@@ -20,6 +20,7 @@ type FileMetadata struct {
 	Salt         []byte    `json:"salt"`
 	PaddingSize  int64     `json:"padding_size"`
 	OriginalHash string    `json:"original_sha256"`
+	OriginalSize int64     `json:"original_size,omitempty"`
 	OriginalMode uint32    `json:"original_mode"`
 	UnlockTime   time.Time `json:"unlock_time"`
 	Compressed   bool      `json:"compressed"`
@@ -110,4 +111,66 @@ func Remove(targetPath string) error {
 func IsEncrypted(targetPath string) bool {
 	_, err := Load(targetPath)
 	return err == nil
+}
+
+// PathKey returns a stable hex identifier for a target path (metadata filename stem).
+func PathKey(targetPath string) (string, error) {
+	abs, err := filepath.Abs(targetPath)
+	if err != nil {
+		return "", err
+	}
+	sum := sha256.Sum256([]byte(abs))
+	return hex.EncodeToString(sum[:]), nil
+}
+
+// ListAll returns metadata for every encrypted file in the store.
+func ListAll() ([]FileMetadata, error) {
+	metaDir, err := config.MetadataDir()
+	if err != nil {
+		return nil, err
+	}
+
+	entries, err := os.ReadDir(metaDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	var all []FileMetadata
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
+			continue
+		}
+		raw, err := os.ReadFile(filepath.Join(metaDir, entry.Name()))
+		if err != nil {
+			continue
+		}
+		var meta FileMetadata
+		if err := json.Unmarshal(raw, &meta); err != nil {
+			continue
+		}
+		all = append(all, meta)
+	}
+	return all, nil
+}
+
+// LoadByKey loads metadata using the path key (sha256 hex of absolute path).
+func LoadByKey(key string) (*FileMetadata, error) {
+	all, err := ListAll()
+	if err != nil {
+		return nil, err
+	}
+	for _, meta := range all {
+		id, err := PathKey(meta.OriginalPath)
+		if err != nil {
+			continue
+		}
+		if id == key {
+			m := meta
+			return &m, nil
+		}
+	}
+	return nil, fmt.Errorf("no metadata found for key %s", key)
 }

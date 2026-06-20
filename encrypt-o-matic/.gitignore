@@ -10,3 +10,4 @@ testdir/
 dist/
 build/
 .tools/
+docs/STUDENT_NOTES.md

@@ -13,12 +13,18 @@ import (
 	"strings"
 	"time"
 
+	"encrypt-o-matic/internal/activity"
 	"encrypt-o-matic/internal/config"
 	"encrypt-o-matic/internal/crypto"
 	"encrypt-o-matic/internal/custom"
 	"encrypt-o-matic/internal/metadata"
 	"encrypt-o-matic/internal/timer"
 )
+
+// ProgressReporter receives step updates during encryption (optional).
+type ProgressReporter func(step, total int, label string)
+
+const encryptSteps = 6
 
 // SHA256Hex returns the lowercase hex SHA-256 digest of data.
 func SHA256Hex(data []byte) string {
@@ -180,7 +186,13 @@ func collectTargetFiles(targetPath string) ([]string, error) {
 	return files, nil
 }
 
-func encryptFile(path, algorithm, password string, paddingMB, durationMinutes int) error {
+func encryptFile(path, algorithm, password string, paddingMB, durationMinutes int, reporter ProgressReporter, source string) error {
+	report := func(step int, label string) {
+		if reporter != nil {
+			reporter(step, encryptSteps, label)
+		}
+	}
+
 	if metadata.IsEncrypted(path) {
 		meta, err := metadata.Load(path)
 		if err != nil {
@@ -188,12 +200,13 @@ func encryptFile(path, algorithm, password string, paddingMB, durationMinutes in
 		}
 		if timer.IsUnlockExpired(meta.UnlockTime) {
 			fmt.Printf("%s is already encrypted but timer expired — decrypting automatically.\n", path)
-			return decryptFile(path, password, true)
+			return decryptFile(path, password, true, source)
 		}
 		return fmt.Errorf("%s is already encrypted (%s)", path, timer.FormatUnlockStatus(meta.UnlockTime))
 	}
 
 	fmt.Printf("Processing: %s\n", path)
+	report(1, "File loaded")
 
 	original, err := readFileBytes(path)
 	if err != nil {
@@ -205,17 +218,22 @@ func encryptFile(path, algorithm, password string, paddingMB, durationMinutes in
 	}
 	originalMode := originalInfo.Mode()
 	originalHash := SHA256Hex(original)
+	originalSize := int64(len(original))
 
+	report(2, "Compressing file data")
 	compressed, err := CompressData(original)
 	if err != nil {
 		return err
 	}
 
+	report(3, "PBKDF2 key derivation")
 	ciphertext, nonce, salt, err := crypto.EncryptBytes(algorithm, password, compressed)
 	if err != nil {
 		return err
 	}
+	report(4, "Encryption")
 
+	report(5, "Applying random padding")
 	padding, err := GeneratePadding(paddingMB)
 	if err != nil {
 		return err
@@ -223,6 +241,7 @@ func encryptFile(path, algorithm, password string, paddingMB, durationMinutes in
 
 	payload := BuildEncryptedPayload(ciphertext, padding)
 
+	report(6, "Saving metadata")
 	backupPath, err := createBackup(path)
 	if err != nil {
 		return err
@@ -240,6 +259,7 @@ func encryptFile(path, algorithm, password string, paddingMB, durationMinutes in
 		Salt:         salt,
 		PaddingSize:  int64(len(padding)),
 		OriginalHash: originalHash,
+		OriginalSize: originalSize,
 		OriginalMode: uint32(originalMode),
 		UnlockTime:   timer.ComputeUnlockTime(durationMinutes),
 		Compressed:   true,
@@ -251,10 +271,11 @@ func encryptFile(path, algorithm, password string, paddingMB, durationMinutes in
 	}
 
 	fmt.Printf("  Encrypted with %s (%s)\n", algorithm, timer.FormatUnlockStatus(meta.UnlockTime))
+	activity.Record(activity.TypeEncrypt, path, algorithm, source)
 	return nil
 }
 
-func decryptFile(path, password string, automatic bool) error {
+func decryptFile(path, password string, automatic bool, source string) error {
 	meta, err := metadata.Load(path)
 	if err != nil {
 		return err
@@ -315,11 +336,17 @@ func decryptFile(path, password string, automatic bool) error {
 	}
 
 	fmt.Printf("  Restored successfully: %s\n", path)
+	activity.Record(activity.TypeDecrypt, path, meta.Algorithm, source)
 	return nil
 }
 
 // EncryptTarget encrypts a file or directory of .exe files.
 func EncryptTarget(targetPath, algorithm, password string, paddingMB, durationMinutes int, customRange string) error {
+	return EncryptTargetWithProgress(targetPath, algorithm, password, paddingMB, durationMinutes, customRange, nil, "cli")
+}
+
+// EncryptTargetWithProgress encrypts with optional step reporting.
+func EncryptTargetWithProgress(targetPath, algorithm, password string, paddingMB, durationMinutes int, customRange string, reporter ProgressReporter, source string) error {
 	if err := custom.RunOperation(customRange); err != nil {
 		return err
 	}
@@ -330,7 +357,7 @@ func EncryptTarget(targetPath, algorithm, password string, paddingMB, durationMi
 	}
 
 	for _, file := range files {
-		if err := encryptFile(file, algorithm, password, paddingMB, durationMinutes); err != nil {
+		if err := encryptFile(file, algorithm, password, paddingMB, durationMinutes, reporter, source); err != nil {
 			return err
 		}
 	}
@@ -341,6 +368,11 @@ func EncryptTarget(targetPath, algorithm, password string, paddingMB, durationMi
 
 // DecryptTarget decrypts a file or all encrypted files in a directory.
 func DecryptTarget(targetPath, password string) error {
+	return DecryptTargetWithSource(targetPath, password, "cli")
+}
+
+// DecryptTargetWithSource decrypts using the given activity source label.
+func DecryptTargetWithSource(targetPath, password, source string) error {
 	info, err := os.Stat(targetPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -370,7 +402,7 @@ func DecryptTarget(targetPath, password string) error {
 			return fmt.Errorf("no encrypted files found in directory")
 		}
 		for _, file := range files {
-			if err := decryptFile(file, password, false); err != nil {
+			if err := decryptFile(file, password, false, source); err != nil {
 				return err
 			}
 		}
@@ -378,7 +410,7 @@ func DecryptTarget(targetPath, password string) error {
 		return nil
 	}
 
-	if err := decryptFile(targetPath, password, false); err != nil {
+	if err := decryptFile(targetPath, password, false, source); err != nil {
 		return err
 	}
 	fmt.Println("Decryption complete.")
@@ -387,6 +419,15 @@ func DecryptTarget(targetPath, password string) error {
 
 // CheckExpiredAutoDecrypt decrypts files whose timer has expired.
 func CheckExpiredAutoDecrypt(targetPath, password string) error {
+	return checkExpiredAutoDecrypt(targetPath, password, "cli")
+}
+
+// CheckExpiredAutoDecryptWithSource is like CheckExpiredAutoDecrypt with a custom activity source.
+func CheckExpiredAutoDecryptWithSource(targetPath, password, source string) error {
+	return checkExpiredAutoDecrypt(targetPath, password, source)
+}
+
+func checkExpiredAutoDecrypt(targetPath, password, source string) error {
 	files, err := collectTargetFiles(targetPath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -415,9 +456,33 @@ func CheckExpiredAutoDecrypt(targetPath, password string) error {
 
 	fmt.Println("Expired timer detected — starting automatic decryption.")
 	for _, file := range expired {
-		if err := decryptFile(file, password, true); err != nil {
+		if err := decryptFile(file, password, true, source); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+// ListBackupsForFile returns backup filenames matching the base name of path.
+func ListBackupsForFile(path string) ([]string, error) {
+	backupRoot, err := config.BackupsDir()
+	if err != nil {
+		return nil, err
+	}
+	base := filepath.Base(path)
+	entries, err := os.ReadDir(backupRoot)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	prefix := base + "."
+	var names []string
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasPrefix(e.Name(), prefix) && strings.HasSuffix(e.Name(), ".bak") {
+			names = append(names, e.Name())
+		}
+	}
+	return names, nil
 }

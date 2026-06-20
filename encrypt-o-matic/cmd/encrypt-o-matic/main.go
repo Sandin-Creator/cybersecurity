@@ -14,6 +14,7 @@ import (
 	"encrypt-o-matic/internal/custom"
 	"encrypt-o-matic/internal/debug"
 	"encrypt-o-matic/internal/fileops"
+	"encrypt-o-matic/internal/web"
 )
 
 const usageText = `# Encrypt-O-Matic
@@ -43,6 +44,7 @@ Usage:
   encrypt-o-matic.exe decrypt <target_path>
   encrypt-o-matic.exe verify-password
   encrypt-o-matic.exe debug-info
+  encrypt-o-matic.exe server [--port 8080]
   encrypt-o-matic.exe --help
 
 
@@ -77,6 +79,9 @@ Commands:
 
   debug-info
       Display diagnostic information
+
+  server
+      Start the local Web UI dashboard (bonus feature)
 
 
 Examples:
@@ -145,6 +150,20 @@ func main() {
 			os.Exit(1)
 		}
 		if err := debug.RunDebugInfoCommand(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
+		return
+	case "server", "web":
+		port := "8080"
+		for i := 2; i < len(os.Args); i++ {
+			if os.Args[i] == "--port" && i+1 < len(os.Args) {
+				port = os.Args[i+1]
+				break
+			}
+		}
+		srv := web.NewServer(":" + port)
+		if err := srv.Start(); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}

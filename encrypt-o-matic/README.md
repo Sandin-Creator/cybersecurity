@@ -16,17 +16,65 @@ Educational Windows CLI file encryption tool written in Go. It encrypts **only**
 - Time-based automatic decryption after a configured duration
 - Immediate password-based decryption via a `decrypt` subcommand
 - Directory support (`.exe` files only by default)
+- **Reviewer Dashboard Web UI** — local HTTP dashboard for review and demonstration
+- **Interactive encryption workflow visualization**
+- **Security layer visualization**
+- **Reviewer Mode and requirement checklist**
+- **Debug and verification tools** (`verify-password`, `debug-info`)
+
+For a structured review guide, see [docs/REVIEWER.md](docs/REVIEWER.md).
+
+## Quick Start
+
+Build:
+
+```bash
+make build
+```
+
+Run automated tests:
+
+```bash
+make test
+```
+
+Start the reviewer dashboard:
+
+```bash
+make server
+```
+
+Open:
+
+```text
+http://localhost:8080
+```
+
+This launches the reviewer-focused dashboard while keeping the CLI fully functional.
+
+---
 
 ## Setup
 
 ### Prerequisites
 
 - Go 1.21 or newer
-- Windows (primary target platform)
+
+### Development environment
+
+The primary target platform is **Windows**.
+
+Development and testing were performed using:
+
+- Go 1.21+
+- Windows
+- WSL/Linux
+
+The application can be built natively on Windows or cross-compiled from Linux/macOS.
 
 ### Clone and fetch dependencies
 
-```powershell
+```bash
 git clone <your-repo-url>
 cd encrypt-o-matic
 go mod tidy
@@ -39,18 +87,18 @@ Source code lives under `cmd/` and `internal/`. Built binaries go to `dist/`. Ru
 
 See [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for a full breakdown of each package and file.
 
-## Windows build instructions
+## Build
 
 From the project directory:
 
-```powershell
-go build -o dist/encrypt-o-matic.exe ./cmd/encrypt-o-matic
+```bash
+make build
 ```
 
-Or use the Makefile:
+Or build directly with Go:
 
-```powershell
-make build
+```bash
+go build -o dist/encrypt-o-matic.exe ./cmd/encrypt-o-matic
 ```
 
 Cross-compile from Linux/macOS:
@@ -59,7 +107,7 @@ Cross-compile from Linux/macOS:
 GOOS=windows GOARCH=amd64 go build -o dist/encrypt-o-matic.exe ./cmd/encrypt-o-matic
 ```
 
-Verify the binary:
+Verify the binary (Windows):
 
 ```powershell
 .\dist\encrypt-o-matic.exe --help
@@ -76,7 +124,7 @@ encrypt-o-matic.exe C:\path\to\app.exe AES 10 0-100000 60
 Arguments:
 
 | Argument | Description |
-|---|---|
+|----------|-------------|
 | `target_app` | Path to a Windows executable or directory |
 | `encryption_algorithm` | `AES`, `ChaCha20`, or `Twofish` |
 | `size_manipulation` | Megabytes of random padding to append |
@@ -96,6 +144,60 @@ encrypt-o-matic.exe -h
 encrypt-o-matic.exe --help
 ```
 
+## Reviewer Dashboard (Bonus Feature)
+
+The Web UI is a reviewer-focused dashboard built on top of the same Go backend used by the CLI.
+
+**Benefits:**
+
+- Visual encryption workflow
+- Security layer explanations
+- Reviewer checklist with automated test runner
+- Metadata inspection
+- Debug tools
+- File management dashboard
+- Local backend path picker (no manual path typing required for demos)
+
+No encryption logic runs in JavaScript. All operations are performed by the Go backend.
+
+Start the server:
+
+```bash
+make server
+```
+
+Or directly:
+
+```bash
+./dist/encrypt-o-matic.exe server --port 8080
+```
+
+Open [http://localhost:8080](http://localhost:8080) in your browser.
+
+| Route | Page |
+|-------|------|
+| `/` | Dashboard |
+| `/encrypt` | Encryption workflow |
+| `/files` | Encrypted files |
+| `/security` | Security visualization |
+| `/reviewer` | Reviewer mode |
+| `/debug` | Debug tools |
+
+## Reviewer Workflow
+
+Recommended review process:
+
+1. Run automated tests — `make test`
+2. Launch the Web Dashboard — `make server`
+3. Review the **Security** page
+4. Review the **Reviewer Mode** checklist
+5. Encrypt a demo executable (CLI or Web UI)
+6. Verify file metadata on the **Encrypted Files** page
+7. Decrypt and verify restoration
+
+This provides a complete walkthrough of all assignment requirements.
+
+
 ## Encryption and decryption flow
 
 ### Encryption
@@ -107,7 +209,7 @@ encrypt-o-matic.exe --help
    - Create a backup in `.encryptomatic/backups/`
    - Read original bytes and compute SHA-256
    - gzip compress the bytes
-   - Encrypt compressed data (AES-256-GCM or ChaCha20-Poly1305)
+   - Encrypt compressed data (AES-256-GCM, ChaCha20-Poly1305, or Twofish-GCM)
    - Append random padding (`size_manipulation` MB)
    - Replace the original file path with encrypted content
    - Save metadata JSON in `.encryptomatic/metadata/`
@@ -177,7 +279,7 @@ This is intentionally time-consuming but harmless.
 
 ## Local data layout
 
-```
+```text
 .encryptomatic/
   master.hash          # bcrypt hash of master password
   backups/             # pre-modification backups
@@ -187,65 +289,49 @@ This is intentionally time-consuming but harmless.
 ## Supported algorithms
 
 | Algorithm | Mode | Status |
-|---|---|---|
+|-----------|------|--------|
 | AES | AES-256-GCM | Implemented |
 | ChaCha20 | ChaCha20-Poly1305 | Implemented |
 | Twofish | Twofish-GCM (`golang.org/x/crypto/twofish`) | Implemented |
 
 All three algorithms use the same encrypt/decrypt pipeline: gzip compress → encrypt → store nonce and salt in metadata → decrypt → decompress → verify SHA-256.
 
-## Automated test workflow
+## Algorithm demonstration
 
-Run the Go tests to verify AES, ChaCha20, and Twofish round-trips on a small test binary:
+All supported algorithms can be tested using the same workflow:
+
+- AES-256-GCM
+- ChaCha20-Poly1305
+- Twofish-GCM
+
+Example:
 
 ```powershell
+encrypt-o-matic.exe demo.exe AES 5 0-3000 2
+encrypt-o-matic.exe decrypt demo.exe
+```
+
+Replace `AES` with `ChaCha20` or `Twofish` to compare algorithms. The automated test suite validates all three.
+
+## Automated testing
+
+Run the Go test suite:
+
+```bash
+make test
+```
+
+Or:
+
+```bash
 go test -v ./...
 ```
 
-The tests:
-
-1. Create a small test `.exe`-like binary payload in a temp directory
-2. Encrypt it with **AES**, decrypt it, and verify SHA-256
-3. Repeat with **ChaCha20**
-4. Repeat with **Twofish**
-
-You should see passing subtests for `AES`, `ChaCha20`, and `Twofish`.
-
-## Twofish demo (manual)
-
-Create a demo folder and test file:
-
-```powershell
-mkdir C:\encrypt-demo
-Set-Content -Path C:\encrypt-demo\demo.exe -Value "MZ test payload for encrypt-o-matic" -NoNewline
-cd C:\encrypt-demo
-```
-
-Encrypt with Twofish (1-minute lock, no extra padding, small custom range):
-
-```powershell
-C:\path\to\encrypt-o-matic.exe C:\encrypt-demo\demo.exe Twofish 0 0-1000 1
-```
-
-Confirm the file is no longer usable as the original executable, then decrypt immediately:
-
-```powershell
-C:\path\to\encrypt-o-matic.exe decrypt C:\encrypt-demo\demo.exe
-```
-
-Verify the restored bytes match the original:
-
-```powershell
-Get-FileHash C:\encrypt-demo\demo.exe -Algorithm SHA256
-```
-
-Repeat the same workflow with `AES` and `ChaCha20` to compare all three algorithms.
+Tests verify AES, ChaCha20, and Twofish round-trips on a minimal test binary in `tests/testdata/demo.exe`. The Web UI **Reviewer Mode** page can also run tests via the dashboard.
 
 ## Troubleshooting
 
 ### Verify the master password
-
-Use `verify-password` to test authentication without encrypting or decrypting anything:
 
 ```powershell
 encrypt-o-matic.exe verify-password
@@ -263,7 +349,7 @@ If the password is wrong:
 Password INVALID
 ```
 
-This command checks the password against `.encryptomatic/master.hash` in your **current working directory**. Run it from the same folder where you created the master password.
+This command checks the password against `.encryptomatic/master.hash` in your **current working directory**.
 
 ### Inspect local state with debug-info
 
@@ -271,75 +357,26 @@ This command checks the password against `.encryptomatic/master.hash` in your **
 encrypt-o-matic.exe debug-info
 ```
 
-Example output:
-
-```text
-Encrypt-O-Matic Debug Information
-
-Config directory:
-  C:\encrypt-demo\.encryptomatic
-
-Master hash:
-  Exists: Yes
-  Path: C:\encrypt-demo\.encryptomatic\master.hash
-
-Metadata files:
-  abc123....json (C:\encrypt-demo\demo.exe)
-
-Backup files:
-  demo.exe.20260620-190622.bak
-```
-
-This command never prints the password or bcrypt hash.
+This command never prints the password or bcrypt hash. Use the Web UI **Debug** page for the same information in a visual format.
 
 ### Common password issues
 
 | Symptom | Likely cause | What to do |
-|---|---|---|
+|---------|--------------|------------|
 | `Password INVALID` from `verify-password` | Wrong password entered | Retry carefully; password input is hidden |
-| `master password hash file not found` | No `.encryptomatic/master.hash` in current directory | Run from the directory where you first set the password, or reset and create a new one |
-| `master password hash file unreadable` | Permission problem | Check file permissions on `.encryptomatic/master.hash` |
+| `master password hash file not found` | No `.encryptomatic/master.hash` in current directory | Run from the directory where you first set the password |
 | `Password verification failed.` | bcrypt mismatch during encrypt/decrypt | Use `verify-password` to confirm the correct password |
-| `decryption failed after successful authentication` | Password auth succeeded but ciphertext/key derivation failed | Confirm you are decrypting with the same password used for encryption and that metadata matches the file |
-
-During decrypt, successful authentication prints:
-
-```text
-Password verified successfully.
-Starting decryption...
-```
-
-If you see the first line but decryption still fails, the problem is in the encrypted file or metadata — not the master password hash check.
+| `decryption failed after successful authentication` | Ciphertext or metadata issue | Confirm metadata matches the file and the same password was used for encryption |
 
 ### Reset the test environment
 
-To start fresh in a lab folder, delete the local config directory from your working directory:
+Delete the local config directory from your working directory:
 
 ```powershell
 Remove-Item -Recurse -Force .\.encryptomatic
 ```
 
-This removes:
-
-- `master.hash`
-- metadata files
-- backup copies
-
-It does **not** restore encrypted executables automatically. Decrypt files first if you still need them, then delete `.encryptomatic`.
-
-### Create a new master password
-
-1. Delete `.encryptomatic` (see above), or use a new working directory
-2. Run any encrypt or decrypt command
-3. Enter and confirm a new password when prompted
-
-You will see:
-
-```text
-Master password created successfully.
-```
-
-After that, `verify-password` should report `Password OK` for the new password.
+Decrypt files first if you still need them. To create a new master password, delete `.encryptomatic` (or use a new working directory) and run any encrypt or decrypt command.
 
 ## Error handling
 
@@ -355,20 +392,22 @@ The tool provides friendly errors for:
 - Corrupted metadata
 - Hash mismatch after decryption
 
-## Review / demo instructions
+## Project highlights
 
-For classroom or lab demos:
-
-1. Build the binary on Windows
-2. Create a test folder, for example `C:\encrypt-demo\`
-3. Copy a harmless test executable into that folder
-4. Run encryption with a short duration (for example `1` minute)
-5. Confirm the executable no longer runs
-6. Run `decrypt` with the master password and verify restoration
-7. Wait for timer expiry and run encrypt mode again to observe auto-decrypt
-8. Inspect `.encryptomatic/backups/` and `.encryptomatic/metadata/` to explain the pipeline
-
-**Demo rule:** Only use executables and directories you created for the lab. Never point the tool at production software or shared systems without authorization.
+- AES-256-GCM support
+- ChaCha20-Poly1305 support
+- Twofish-GCM support
+- bcrypt password protection
+- PBKDF2 key derivation with salt
+- SHA-256 integrity verification
+- Compression before encryption
+- Timer-based file locking
+- Directory encryption
+- Backup and recovery system
+- Automated testing
+- Reviewer Dashboard Web UI
+- Debug and verification tools
+- Standard Go project structure
 
 ## License
 
