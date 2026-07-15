@@ -1,0 +1,37 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Go
+*.exe
+*.test
+
+# Object files
+*.o
+*.obj
+
+# ELF core dumps
+core
+core.*
+
+# Temporary files
+*.tmp
+*.temp
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Build outputs (can be regenerated)
+fuser_tool
+runtime_loader
+loader_bin
+
+# Output files
+output_jules.txt
+output_vincent.txt
